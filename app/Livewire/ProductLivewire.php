@@ -22,21 +22,21 @@ class ProductLivewire extends Component
 
     public function render()
     {
-        if ($this->readyToLoad) {
-            $products = Product::when($this->search, function ($query) {
-                $query->where(function ($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%');
-                });
-            })->orderBy('id', 'desc')
-                ->paginate(10);
-        } else {
-            $products = [];
-        }
+        $products = $this->readyToLoad ? $this->loadProducts() : collect();
         return view('livewire.product-livewire', compact('products'))
             ->layout('layouts.app');
     }
 
+    public function loadProducts()
+    {
+        return Product::when($this->search, function ($query) {
+            $query->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
+            });
+        })->orderBy('id', 'desc')
+            ->paginate(10);
+    }
     public function create()
     {
         $this->resetInputFields();
@@ -96,7 +96,11 @@ class ProductLivewire extends Component
             ]
         );
 
-        session()->flash('message', 'Product Created Successfully.');
+        if ($this->id_product) {
+            session()->flash('message', 'Product Updated Successfully.');
+        } else {
+            session()->flash('message', 'Product Created Successfully.');
+        }
 
         $this->resetInputFields();
         $this->closeModal();

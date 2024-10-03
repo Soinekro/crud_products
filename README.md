@@ -3,6 +3,10 @@
 
 Este proyecto es una aplicación CRUD de productos construida con Laravel.
 
+## Prerrequisitos
+- Asegúrate de tener PHP versión 8.2 o superior, ya que el framework Laravel utilizado es la versión 11.
+- Tener instalado Laragon, XAMPP, o el entorno de desarrollo de tu preferencia.
+
 ## Pasos para clonar el repositorio
 
 1. Clona el repositorio:
@@ -36,6 +40,15 @@ Este proyecto es una aplicación CRUD de productos construida con Laravel.
     ```bash
     php artisan key:generate
     ```
+
+## Ejecucion de test
+1. Ejecutar test de prueba para el componente livewire donde esta el crud
+    ```bash
+    php artisan test --filter ProductTest
+    ```
+    ## Observaciones sobre los tests
+
+    Los tests utilizan el trait `RefreshDatabase`, lo que significa que la base de datos se reinicia en cada ejecución de test. Por lo tanto, es recomendable ejecutar los tests al inicio del desarrollo para asegurar que todo funcione correctamente desde el principio.
 
 ## Acceso a la aplicación
 

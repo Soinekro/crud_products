@@ -4,6 +4,22 @@
             {{ __('Crear producto') }}
         </x-button>
     </div>
+    @if (session()->has('message'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <strong class="font-bold">Good job</strong>
+            <span class="block sm:inline">
+                {{ session('message') }}
+            </span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
     <!-- table -->
     <div class="mt-4">
         <div class="flex">
@@ -65,10 +81,10 @@
                                         wire:click="show({{ $item->id }})">
                                         {{ __('Ver') }}
                                     </x-button>
-                                    <x-button class="w-24 m-2 bg-red-800 hover:bg-red-300" type="button"
+                                    <x-danger-button class="w-24 m-2" type="button"
                                         wire:click="delete({{ $item->id }})">
                                         {{ __('Eliminar') }}
-                                    </x-button>
+                                    </x-danger-button>
                                 </td>
                             </tr>
                         @endforeach
@@ -84,7 +100,8 @@
             <tr>
                 <div class="block md:flex mt-4 p-4">
                     <div class="mb-2 md:mb-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 inline mr-3 fill-red-500" viewBox="0 0 512 512">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 inline mr-3 fill-red-500"
+                            viewBox="0 0 512 512">
                             <path
                                 d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z" />
                         </svg>
