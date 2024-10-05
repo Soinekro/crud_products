@@ -1,7 +1,7 @@
 
 # CRUD Products
 
-Este proyecto es una aplicación CRUD de productos construida con Laravel.
+Este proyecto es una aplicación CRUD de productos construida con Laravel aplicando arquitectura hexagonal al proyecto.
 
 ## Prerrequisitos
 - Asegúrate de tener PHP versión 8.2 o superior, ya que el framework Laravel utilizado es la versión 11.
