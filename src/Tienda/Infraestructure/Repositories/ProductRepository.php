@@ -2,7 +2,6 @@
 
 namespace Src\Tienda\Infraestructure\Repositories;
 
-use App\Models\Product as EloquentProductModel;
 use Src\Tienda\Domain\Entities\Product\Product;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductDescription;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductId;
@@ -10,7 +9,7 @@ use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductName;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductPrice;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductStock;
 use Src\Tienda\Domain\Repositories\ProductRepositoryInterface;
-
+use Src\Tienda\Infraestructure\EloquentModels\EloquentProductModel;
 
 final class ProductRepository implements ProductRepositoryInterface
 {
@@ -53,14 +52,14 @@ final class ProductRepository implements ProductRepositoryInterface
     public function update(Product $product): void
     {
         $productModel = $this->eloquentUserModel->find($product->id()->value());
-    if ($productModel) {
-        $productModel->update([
-            'name' => $product->name()->value(),
-            'description' => $product->description()->value(),
-            'price' => $product->price()->value(),
-            'stock' => $product->stock()->value(),
-        ]);
-    }
+        if ($productModel) {
+            $productModel->update([
+                'name' => $product->name()->value(),
+                'description' => $product->description()->value(),
+                'price' => $product->price()->value(),
+                'stock' => $product->stock()->value(),
+            ]);
+        }
     }
 
     public function delete(ProductId $id): void

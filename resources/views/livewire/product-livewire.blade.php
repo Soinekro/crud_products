@@ -23,7 +23,22 @@
     <!-- table -->
     <div class="mt-4">
         <div class="flex">
+            <!-- paginacion -->
+            <div class="flex-1">
+                <div class="flex justify-end">
+                    <select wire:model.lazy="perPage"
+                        class="w-24 px-2 py-1 text-xs text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
             <div class="block xs:flex sm:items-center w-full">
+                <label for="search" class="text-gray-700 dark:text-gray-400">
+                    {{ __('Buscar') }}
+                </label>
                 <input type="text"
                     class="sm:max-w-max mx-2 w-full md:w-1/3 text-gray-800 rounded-md text-xs font-medium"
                     placeholder="{{ __('Buscar') }}" wire:model.lazy="search" />
@@ -58,31 +73,31 @@
                         @foreach ($products as $item)
                             <tr>
                                 <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ $item->id }}
+                                    {{ $item->id}}
                                 </th>
                                 <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ $item->name }}
+                                    {{ $item->name}}
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ $item->description }}
+                                    {{ $item->description}}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $item->price }}
+                                    {{ $item->price}}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $item->stock }}
+                                    {{ $item->stock}}
                                 </td>
                                 <td class="px-6 py-4">
                                     <x-button class="w-24 m-2 bg-green-800 hover:bg-green-300" type="button"
-                                        wire:click="edit({{ $item->id }})">
+                                        wire:click="edit({{ $item->id}})">
                                         {{ __('Editar') }}
                                     </x-button>
                                     <x-button class="w-24 m-2 bg-blue-800 hover:bg-blue-300" type="button"
-                                        wire:click="show({{ $item->id }})">
+                                        wire:click="show({{ $item->id}})">
                                         {{ __('Ver') }}
                                     </x-button>
                                     <x-danger-button class="w-24 m-2" type="button"
-                                        wire:click="delete({{ $item->id }})">
+                                        wire:click="delete({{ $item->id}})">
                                         {{ __('Eliminar') }}
                                     </x-danger-button>
                                 </td>
@@ -91,6 +106,7 @@
                     </tbody>
                 </table>
             </div>
+            {{-- @dd($products) --}}
             @if ($products->hasPages())
                 <div class=" p-1 bg-gray-300 border-t border-gray-200 sm:px-6">
                     {{ $products->links() }}
@@ -227,7 +243,7 @@
         </x-slot>
     </x-dialog-modal>
 
-    <x-dialog-modal wire:model="showModalproduct">
+    <x-dialog-modal wire:model="showModalProduct">
         <x-slot name="title">
             {{ __('Información del producto') }}
         </x-slot>

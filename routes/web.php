@@ -1,7 +1,7 @@
 <?php
 
-use App\Livewire\ProductLivewire;
 use Illuminate\Support\Facades\Route;
+use Src\Tienda\Infraestructure\Http\ProductLivewire;
 
 Route::get('/', ProductLivewire::class);
 

@@ -2,41 +2,40 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\ProductLivewire;
-use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
+use Src\Tienda\Infraestructure\EloquentModels\EloquentProductModel;
+use Src\Tienda\Infraestructure\Http\ProductLivewire;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
-    // use RefreshDatabase;
-    // #[Test]
-    // public function product_component_exists_on_the_page()
-    // {
-    //     $this->get('/')
-    //         ->assertSeeLivewire(ProductLivewire::class);
-    // }
+    use RefreshDatabase;
+    #[Test]
+    public function product_component_exists_on_the_page()
+    {
+        $this->get('/')
+            ->assertSeeLivewire(ProductLivewire::class);
+    }
 
-    // #[Test]
-    // public function displays_products()
-    // {
-    //     Product::factory()->create(
-    //         [
-    //             'name' => 'producto 1',
-    //             'description' => 'descripcion 1',
-    //             'price' => 10.56,
-    //             'stock' => 10,
-    //         ]
-    //     );
+    #[Test]
+    public function displays_products()
+    {
+        EloquentProductModel::factory()->create(
+            [
+                'name' => 'producto 1',
+                'description' => 'descripcion 1',
+                'price' => 10.56,
+                'stock' => 10,
+            ]
+        );
 
-    //     Livewire::test(ProductLivewire::class)
-    //         ->assertSee('Por favor cree un registro')
-    //         ->call('loadItems')
-    //         ->assertSee('producto 1');
-    // }
+        Livewire::test(ProductLivewire::class)
+            ->assertSee('Por favor cree un registro')
+            ->call('loadItems')
+            ->assertSee('producto 1');
+    }
 
     #[Test]
     public function create_product()
@@ -54,7 +53,7 @@ class ProductTest extends TestCase
     #[Test]
     public function update_product()
     {
-        $product = Product::create(
+        $product = EloquentProductModel::create(
             [
                 'name' => 'producto 3',
                 'description' => 'descripcion 3',
@@ -73,82 +72,82 @@ class ProductTest extends TestCase
             ->assertSee('Product Updated Successfully');
     }
 
-    // #[Test]
-    // public function delete_product()
-    // {
-    //     $product = Product::factory()->create(
-    //         [
-    //             'name' => 'producto eliminado',
-    //             'description' => 'descripcion eliminada',
-    //             'price' => 15.54,
-    //             'stock' => rand(0, 100),
-    //         ]
-    //     );
+    #[Test]
+    public function delete_product()
+    {
+        $product = EloquentProductModel::factory()->create(
+            [
+                'name' => 'producto eliminado',
+                'description' => 'descripcion eliminada',
+                'price' => 15.54,
+                'stock' => rand(0, 100),
+            ]
+        );
 
-    //     Livewire::test(ProductLivewire::class)
-    //         ->call('delete', $product->id)
-    //         ->assertSee('Product Deleted Successfully');
-    // }
+        Livewire::test(ProductLivewire::class)
+            ->call('delete', $product->id)
+            ->assertSee('Product Deleted Successfully');
+    }
 
-    // #[Test]
-    // public function search_product()
-    // {
-    //     Product::factory()->create(
-    //         [
-    //             'name' => 'producto 1',
-    //             'description' => 'descripcion 1',
-    //             'price' => 10.56,
-    //             'stock' => 10,
-    //         ]
-    //     );
-    //     Product::factory()->create(
-    //         [
-    //             'name' => 'producto 2',
-    //             'description' => 'descripcion 2',
-    //             'price' => 20.56,
-    //             'stock' => 20,
-    //         ]
-    //     );
-    //     Product::factory()->create(
-    //         [
-    //             'name' => 'producto 3',
-    //             'description' => 'descripcion 3',
-    //             'price' => 30.56,
-    //             'stock' => 30,
-    //         ]
-    //     );
+    #[Test]
+    public function search_product()
+    {
+        EloquentProductModel::factory()->create(
+            [
+                'name' => 'producto 1',
+                'description' => 'descripcion 1',
+                'price' => 10.56,
+                'stock' => 10,
+            ]
+        );
+        EloquentProductModel::factory()->create(
+            [
+                'name' => 'producto 2',
+                'description' => 'descripcion 2',
+                'price' => 20.56,
+                'stock' => 20,
+            ]
+        );
+        EloquentProductModel::factory()->create(
+            [
+                'name' => 'producto 3',
+                'description' => 'descripcion 3',
+                'price' => 30.56,
+                'stock' => 30,
+            ]
+        );
 
-    //     Livewire::test(ProductLivewire::class)
-    //         ->set('search', 'producto 1')
-    //         ->call('loadItems')
-    //         ->assertSee('producto 1')
-    //         ->assertDontSee('producto 3')
-    //         ->assertDontSee('producto 2');
-    // }
+        Livewire::test(ProductLivewire::class)
+            ->set('search', 'producto 1')
+            ->call('loadItems')
+            ->assertSee('producto 1')
+            ->assertDontSee('producto 3')
+            ->assertDontSee('producto 2');
+    }
 
-    // #[Test]
-    // public function show_product()
-    // {
-    //     $product = Product::create(
-    //         [
-    //             'name' => 'producto 1',
-    //             'description' => 'descripcion 1',
-    //             'price' => 20.56,
-    //             'stock' => 20,
-    //         ]
-    //     );
-    //     Livewire::test(ProductLivewire::class)
-    //         ->call('show', $product->id)
-    //         ->assertSee('producto 1')
-    //         ->assertSee('descripcion 1')
-    //         ->assertSee(20.56)
-    //         ->assertSee(20);
-    // }
-    // #[Test]
-    // public function required_fields()
-    // {
-    //     Livewire::test(ProductLivewire::class)
-    //         ->call('save')
-    //         ->assertHasErrors(['name' => 'required', 'description' => 'required', 'price' => 'required', 'stock' => 'required']);
-    // }
+    #[Test]
+    public function show_product()
+    {
+        $product = EloquentProductModel::create(
+            [
+                'name' => 'producto 1',
+                'description' => 'descripcion 1',
+                'price' => 20.56,
+                'stock' => 20,
+            ]
+        );
+        Livewire::test(ProductLivewire::class)
+            ->call('show', $product->id)
+            ->assertSee('producto 1')
+            ->assertSee('descripcion 1')
+            ->assertSee(20.56)
+            ->assertSee(20);
+    }
+    #[Test]
+    public function required_fields()
+    {
+        Livewire::test(ProductLivewire::class)
+            ->call('save')
+            ->assertHasErrors(['name' => 'required', 'description' => 'required', 'price' => 'required', 'stock' => 'required']);
+    }
 }

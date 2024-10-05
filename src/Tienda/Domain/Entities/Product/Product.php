@@ -8,6 +8,13 @@ use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductName;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductPrice;
 use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductStock;
 
+/**
+ * @property ProductId id
+ * @property ProductName name
+ * @property ProductDescription description
+ * @property ProductPrice price
+ * @property ProductStock stock
+ */
 final class Product
 {
     private $id, $name, $description, $price, $stock;

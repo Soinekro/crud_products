@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Src\Tienda\Infraestructure\EloquentModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed price
  * @property mixed stock
  */
-class Product extends Model
+class EloquentProductModel extends Model
 {
     use HasFactory;
+
+    protected $table = 'products';
 
     protected $fillable = ['name', 'description', 'price', 'stock'];
 

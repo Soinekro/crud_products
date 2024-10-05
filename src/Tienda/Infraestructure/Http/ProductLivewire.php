@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Livewire;
+namespace Src\Tienda\Infraestructure\Http;
 
-use App\Models\Product;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Src\Tienda\Aplication\UseCases\CreateProductUseCase;
+use Src\Tienda\Aplication\UseCases\DeleteProductUseCase;
+use Src\Tienda\Aplication\UseCases\ReadProductUseCase;
 use Src\Tienda\Aplication\UseCases\UpdateProductUseCase;
+use Src\Tienda\Domain\Entities\Product\ValueObjects\ProductId;
+use Src\Tienda\Infraestructure\EloquentModels\EloquentProductModel;
 use Src\Tienda\Infraestructure\Repositories\ProductRepository;
 
 class ProductLivewire extends Component
@@ -16,7 +20,11 @@ class ProductLivewire extends Component
 
     public $showModal = false;
     public $showModalProduct = false;
+
     public $search;
+    public $perPage = 5;
+
+    use WithPagination;
 
     public function loadItems()
     {
@@ -30,13 +38,18 @@ class ProductLivewire extends Component
             ->layout('layouts.app');
     }
 
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
     public function loadProducts()
     {
-        return Product::when($this->search, function ($query) {
+        return EloquentProductModel::when($this->search, function ($query) {
             $query->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+                ->orWhere('description', 'like', '%' . $this->search . '%');
         })->orderBy('id', 'desc')
-          ->paginate(10);
+            ->paginate($this->perPage);
     }
 
     public function create()
@@ -68,12 +81,13 @@ class ProductLivewire extends Component
     {
         $this->validate($this->rules(), $this->messages());
 
+        $message = ($this->id_product) ? 'Product Updated Successfully.' : 'Product Created Successfully.';
         if ($this->id_product) {
             $this->update(new UpdateProductUseCase(new ProductRepository()));
         } else {
             $this->store(new CreateProductUseCase(new ProductRepository()));
         }
-        session()->flash('message', $this->id_product ? 'Product Updated Successfully.' : 'Product Created Successfully.');
+        session()->flash('message', $message);
 
         $this->resetInputFields();
         $this->closeModal();
@@ -87,9 +101,6 @@ class ProductLivewire extends Component
             $this->price,
             $this->stock
         );
-        session()->flash('message', 'Product Created Successfully.');
-        $this->resetInputFields();
-        $this->closeModal();
     }
 
     public function update(UpdateProductUseCase $updateProductUseCase)
@@ -101,31 +112,29 @@ class ProductLivewire extends Component
             $this->price,
             $this->stock
         );
-        session()->flash('message', 'Product Updated Successfully.');
-        $this->resetInputFields();
-        $this->closeModal();
     }
-    public function edit(Product $product)
+    public function edit($id)
     {
         $this->resetInputFields();
-        $this->show($product);
+        $this->show(new ReadProductUseCase(new ProductRepository()), $id);
         $this->closeModalProduct();
         $this->openModal();
     }
 
-    public function delete(Product $product)
+    public function delete(DeleteProductUseCase $deleteProductUseCase, $id)
     {
-        $product->delete();
+        $deleteProductUseCase->__invoke(new ProductId($id));
         session()->flash('message', 'Product Deleted Successfully.');
     }
 
-    public function show(Product $product)
+    public function show(ReadProductUseCase $showProductUseCase, $id)
     {
-        $this->name = $product->name;
-        $this->description = $product->description;
-        $this->price = $product->price;
-        $this->stock = $product->stock;
-        $this->id_product = $product->id;
+        $product = $showProductUseCase->__invoke(new ProductId($id));
+        $this->name = $product->name()->value();
+        $this->description = $product->description()->value();
+        $this->price = $product->price()->value();
+        $this->stock = $product->stock()->value();
+        $this->id_product = $product->id()->value();
         $this->openModalProduct();
     }
 
