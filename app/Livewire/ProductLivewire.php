@@ -4,6 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use Src\Tienda\Aplication\UseCases\CreateProductUseCase;
+use Src\Tienda\Aplication\UseCases\UpdateProductUseCase;
+use Src\Tienda\Infraestructure\Repositories\ProductRepository;
 
 class ProductLivewire extends Component
 {
@@ -12,7 +15,7 @@ class ProductLivewire extends Component
     public $id_product;
 
     public $showModal = false;
-    public $showModalproduct = false;
+    public $showModalProduct = false;
     public $search;
 
     public function loadItems()
@@ -30,13 +33,12 @@ class ProductLivewire extends Component
     public function loadProducts()
     {
         return Product::when($this->search, function ($query) {
-            $query->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('description', 'like', '%' . $this->search . '%');
-            });
+            $query->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('description', 'like', '%' . $this->search . '%');
         })->orderBy('id', 'desc')
-            ->paginate(10);
+          ->paginate(10);
     }
+
     public function create()
     {
         $this->resetInputFields();
@@ -64,53 +66,50 @@ class ProductLivewire extends Component
 
     public function save()
     {
-        $this->validate(
-            [
-                'name' => 'required|unique:products,name,' . $this->id_product,
-                'description' => 'required',
-                'price' => 'required|numeric|min:0',
-                'stock' => 'required|int|min:0',
-            ],
-            [
-                'name.required' => 'El campo nombre es requerido.',
-                'name.unique' => 'El campo nombre ya ha sido tomado.',
-                'description.required' => 'El campo descripción es requerido.',
-                'price.required' => 'El campo precio es requerido.',
-                'price.numeric' => 'El campo precio debe ser un número.',
-                'price.min' => 'El campo precio debe ser mayor o igual a 0.',
-                'stock.required' => 'El campo stock es requerido.',
-                'stock.int' => 'El campo stock debe ser un número entero.',
-                'stock.min' => 'El campo stock debe ser mayor o igual a 0.',
-            ]
-        );
-
-        Product::updateOrCreate(
-            [
-                'id' => $this->id_product
-            ],
-            [
-                'name' => $this->name,
-                'description' => $this->description,
-                'price' => $this->price,
-                'stock' => $this->stock,
-            ]
-        );
+        $this->validate($this->rules(), $this->messages());
 
         if ($this->id_product) {
-            session()->flash('message', 'Product Updated Successfully.');
+            $this->update(new UpdateProductUseCase(new ProductRepository()));
         } else {
-            session()->flash('message', 'Product Created Successfully.');
+            $this->store(new CreateProductUseCase(new ProductRepository()));
         }
+        session()->flash('message', $this->id_product ? 'Product Updated Successfully.' : 'Product Created Successfully.');
 
         $this->resetInputFields();
         $this->closeModal();
     }
 
+    public function store(CreateProductUseCase $createProductUseCase)
+    {
+        $createProductUseCase->__invoke(
+            $this->name,
+            $this->description,
+            $this->price,
+            $this->stock
+        );
+        session()->flash('message', 'Product Created Successfully.');
+        $this->resetInputFields();
+        $this->closeModal();
+    }
+
+    public function update(UpdateProductUseCase $updateProductUseCase)
+    {
+        $updateProductUseCase->__invoke(
+            $this->id_product,
+            $this->name,
+            $this->description,
+            $this->price,
+            $this->stock
+        );
+        session()->flash('message', 'Product Updated Successfully.');
+        $this->resetInputFields();
+        $this->closeModal();
+    }
     public function edit(Product $product)
     {
         $this->resetInputFields();
         $this->show($product);
-        $this->closeModalproduct();
+        $this->closeModalProduct();
         $this->openModal();
     }
 
@@ -127,22 +126,47 @@ class ProductLivewire extends Component
         $this->price = $product->price;
         $this->stock = $product->stock;
         $this->id_product = $product->id;
-        $this->openModalproduct();
+        $this->openModalProduct();
     }
 
-    public function openModalproduct()
+    public function openModalProduct()
     {
-        $this->showModalproduct = true;
+        $this->showModalProduct = true;
     }
 
-    public function closeModalproduct()
+    public function closeModalProduct()
     {
-        $this->showModalproduct = false;
+        $this->showModalProduct = false;
     }
 
     public function close()
     {
         $this->closeModal();
-        $this->closeModalproduct();
+        $this->closeModalProduct();
+    }
+
+    private function rules()
+    {
+        return [
+            'name' => 'required|unique:products,name,' . $this->id_product,
+            'description' => 'required',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|int|min:0',
+        ];
+    }
+
+    private function messages()
+    {
+        return [
+            'name.required' => 'El campo nombre es requerido.',
+            'name.unique' => 'El campo nombre ya ha sido tomado.',
+            'description.required' => 'El campo descripción es requerido.',
+            'price.required' => 'El campo precio es requerido.',
+            'price.numeric' => 'El campo precio debe ser un número.',
+            'price.min' => 'El campo precio debe ser mayor o igual a 0.',
+            'stock.required' => 'El campo stock es requerido.',
+            'stock.int' => 'El campo stock debe ser un número entero.',
+            'stock.min' => 'El campo stock debe ser mayor o igual a 0.',
+        ];
     }
 }
