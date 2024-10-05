@@ -25,4 +25,8 @@ class EloquentProductModel extends Model
     ];
 
 
+    public static function factory()
+    {
+        return new \Src\Tienda\Domain\Factories\EloquentProductModelFactory();
+    }
 }
